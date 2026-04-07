@@ -1,0 +1,14 @@
+# Secrets
+.env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Test logs
+logs/
+
+# Claude Code
+.claude/

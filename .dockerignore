@@ -1,0 +1,8 @@
+venv/
+web/
+scraping/
+.claude/
+.env
+__pycache__/
+*.pyc
+.git/

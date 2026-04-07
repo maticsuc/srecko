@@ -1,0 +1,11 @@
+# Replace with your actual domain
+# For initial testing without a domain, use :80 instead
+:80 {
+    handle /api/* {
+        reverse_proxy api:8000
+    }
+
+    handle {
+        reverse_proxy web:3000
+    }
+}
