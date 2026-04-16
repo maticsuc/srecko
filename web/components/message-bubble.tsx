@@ -8,6 +8,7 @@ export interface Message {
 
 export default function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === "user";
+  const isError = !isUser && message.content.startsWith("Napaka:");
 
   return (
     <div
@@ -28,12 +29,18 @@ export default function MessageBubble({ message }: { message: Message }) {
       <div
         className={`max-w-[80%] px-4 py-3 ${
           isUser
-            ? "rounded-2xl rounded-br-sm bg-[var(--color-ink)] text-[var(--color-paper)] shadow-sm"
+            ? "bg-[var(--color-ink)] text-[var(--color-paper)] shadow-[2px_2px_0_var(--color-subtle)]"
+            : isError
+            ? "border-l-[3px] border-[var(--color-accent)] bg-[var(--color-paper-warm)] opacity-80"
             : "border-l-[3px] border-[var(--color-accent)] bg-[var(--color-paper-warm)] shadow-[2px_2px_0_var(--color-subtle)]"
         }`}
       >
         {isUser ? (
           <p className="whitespace-pre-wrap text-[0.9375rem] leading-relaxed">
+            {message.content}
+          </p>
+        ) : isError ? (
+          <p className="text-sm leading-relaxed text-[var(--color-accent)] italic">
             {message.content}
           </p>
         ) : (

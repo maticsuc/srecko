@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 
   --color-ink: #0a0a0a;
@@ -9,8 +9,13 @@
   --color-paper-warm: #ece7df;
   --color-accent: #c23a22;
   --color-accent-hover: #a83220;
-  --color-muted: #8a8478;
+  --color-muted: #65605a;
   --color-subtle: #c8c3ba;
+}
+
+/* Force prose to inherit Space Grotesk rather than using its own font stack */
+.prose {
+  font-family: inherit;
 }
 
 /* Scrollbar */

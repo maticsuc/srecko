@@ -48,30 +48,24 @@ export default function Home() {
 
   return (
     <div className="flex h-dvh flex-col">
-      {/* Header */}
-      <header className="bg-[var(--color-paper-warm)] border-b border-[var(--color-subtle)] px-4 py-4">
-        <div className="mx-auto flex max-w-3xl items-center gap-4">
-          <div className="shrink-0">
-            <img
-              src="/srecko/srecko-avatar.jpg"
-              alt="Srecko Kosovel"
-              className="h-11 w-11 rounded-full object-cover ring-2 ring-[var(--color-accent)] ring-offset-2 ring-offset-[var(--color-paper-warm)]"
-            />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h1 className="font-display text-base font-bold tracking-wide text-[var(--color-ink)] uppercase leading-none">
+      {/* Masthead */}
+      <header className="border-b border-[var(--color-ink)] px-4 py-2">
+        <div className="mx-auto flex max-w-3xl items-center justify-between">
+          <h1 className="font-display text-[0.6875rem] font-bold tracking-[0.18em] text-[var(--color-ink)] uppercase">
+            <button
+              onClick={() => { window.location.href = process.env.NEXT_PUBLIC_BASE_PATH || "/"; }}
+              className="cursor-pointer hover:text-[var(--color-accent)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+              aria-label="Pojdi domov"
+            >
               Srečko Kosovel
-            </h1>
-            <p className="mt-1 text-[0.7rem] tracking-wide text-[var(--color-muted)]">
-              Pesnik &middot; Kras &middot; 1904–1926
-            </p>
-          </div>
-          <span className="hidden text-[0.65rem] font-medium tracking-[0.18em] text-[var(--color-muted)] uppercase sm:block">
-            Avantgarda
+            </button>
+          </h1>
+          <span className="font-display text-[0.6875rem] tracking-[0.12em] text-[var(--color-muted)] uppercase">
+            1904–1926
           </span>
         </div>
       </header>
-      <div className="h-[3px] bg-[var(--color-accent)]" />
+      <div className="h-[2px] bg-[var(--color-accent)]" />
 
       {/* Chat */}
       <ChatWindow

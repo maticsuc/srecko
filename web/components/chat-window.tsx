@@ -87,7 +87,7 @@ export default function ChatWindow({
                 <button
                   key={q}
                   onClick={() => onSuggestionClick(q)}
-                  className="cursor-pointer border border-[var(--color-ink)] bg-[var(--color-paper-warm)] px-4 py-2 font-display text-sm font-medium tracking-tight transition-all duration-200 hover:border-[var(--color-accent)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+                  className="cursor-pointer border border-[var(--color-ink)] bg-[var(--color-paper-warm)] px-4 py-2 font-display text-[0.8125rem] font-medium tracking-tight transition-all duration-200 hover:border-[var(--color-accent)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
                 >
                   {q}
                 </button>
