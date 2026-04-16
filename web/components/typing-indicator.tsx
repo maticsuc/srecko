@@ -2,7 +2,7 @@ export default function TypingIndicator() {
   return (
     <div className="animate-message-in flex items-end gap-3 px-4">
       <img
-        src="/srecko-avatar.jpg"
+        src="/srecko/srecko-avatar.jpg"
         alt="Srečko Kosovel"
         className="h-8 w-8 shrink-0 self-start rounded-full border-2 border-[var(--color-ink)] object-cover grayscale mt-0.5"
       />

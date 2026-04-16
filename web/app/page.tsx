@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useCallback } from "react";
+
+function genId(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return genId();
+  }
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
 import ChatWindow from "@/components/chat-window";
 import ChatInput from "@/components/chat-input";
 import { type Message } from "@/components/message-bubble";
@@ -12,7 +19,7 @@ export default function Home() {
 
   const handleSend = useCallback(async (text: string) => {
     const userMsg: Message = {
-      id: crypto.randomUUID(),
+      id: genId(),
       role: "user",
       content: text,
     };
@@ -22,14 +29,14 @@ export default function Home() {
     try {
       const data = await sendMessage(text);
       const assistantMsg: Message = {
-        id: crypto.randomUUID(),
+        id: genId(),
         role: "assistant",
         content: data.answer,
       };
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err) {
       const errorMsg: Message = {
-        id: crypto.randomUUID(),
+        id: genId(),
         role: "assistant",
         content: `Napaka: ${err instanceof Error ? err.message : "Nekaj je slo narobe."}`,
       };
@@ -46,7 +53,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-3xl items-center gap-4">
           <div className="shrink-0">
             <img
-              src="/srecko-avatar.jpg"
+              src="/srecko/srecko-avatar.jpg"
               alt="Srecko Kosovel"
               className="h-11 w-11 rounded-full object-cover ring-2 ring-[var(--color-accent)] ring-offset-2 ring-offset-[var(--color-paper-warm)]"
             />
