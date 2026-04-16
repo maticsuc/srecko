@@ -3,8 +3,8 @@
 import { useState, useCallback } from "react";
 
 function genId(): string {
-  if (typeof crypto !== "undefined" && crypto.randomUUID) {
-    return genId();
+  if (typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
   }
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
