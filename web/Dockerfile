@@ -5,6 +5,10 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+
+ARG API_URL=http://api:8000
+ENV API_URL=$API_URL
+
 RUN npm run build
 
 # --- Production image ---
@@ -15,6 +19,7 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 

@@ -1,6 +1,6 @@
 # Database
 psycopg2-binary==2.9.9
-pgvector==0.2.4
+pgvector==0.2.5
 
 # Environment
 python-dotenv==1.0.0
