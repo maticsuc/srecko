@@ -1,6 +1,8 @@
 venv/
 web/
-scraping/
+scraping/*
+!scraping/
+!scraping/kosovel_facts.json
 .claude/
 .env
 __pycache__/

@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY api.py chat_srecko.py ./
 COPY langchain_rag/ langchain_rag/
 COPY scripts/utils/ scripts/utils/
+COPY scraping/kosovel_facts.json scraping/kosovel_facts.json
 
 EXPOSE 8000
 
