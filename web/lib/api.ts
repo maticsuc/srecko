@@ -9,8 +9,7 @@ export interface ChatResponse {
 }
 
 export async function sendMessage(message: string): Promise<ChatResponse> {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  const res = await fetch(`${basePath}/api/chat`, {
+  const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message }),

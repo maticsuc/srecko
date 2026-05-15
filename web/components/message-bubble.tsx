@@ -19,7 +19,7 @@ export default function MessageBubble({ message }: { message: Message }) {
       {/* Avatar — only for assistant */}
       {!isUser && (
         <img
-          src="/srecko/srecko-avatar.jpg"
+          src="/srecko-avatar.jpg"
           alt="Srečko Kosovel"
           className="h-8 w-8 shrink-0 self-start rounded-full border-2 border-[var(--color-ink)] object-cover grayscale mt-0.5"
         />

@@ -1,13 +1,7 @@
 import type { NextConfig } from "next";
 
-const BASE_PATH = "/srecko";
-
 const nextConfig: NextConfig = {
   output: "standalone",
-  basePath: BASE_PATH,
-  env: {
-    NEXT_PUBLIC_BASE_PATH: BASE_PATH,
-  },
   async rewrites() {
     return [
       {

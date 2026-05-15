@@ -61,7 +61,7 @@ export default function ChatWindow({
               {/* Offset accent frame */}
               <div className="absolute -inset-2 translate-x-2 translate-y-2 border-2 border-[var(--color-accent)]" />
               <img
-                src="/srecko/srecko-avatar.jpg"
+                src="/srecko-avatar.jpg"
                 alt="Srečko Kosovel — portret"
                 className="relative h-32 w-32 object-cover grayscale contrast-[1.05]"
               />

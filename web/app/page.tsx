@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import ChatWindow from "@/components/chat-window";
+import ChatInput from "@/components/chat-input";
+import { type Message } from "@/components/message-bubble";
+import { sendMessage } from "@/lib/api";
 
 function genId(): string {
   if (typeof crypto.randomUUID === "function") {
@@ -8,10 +12,6 @@ function genId(): string {
   }
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
-import ChatWindow from "@/components/chat-window";
-import ChatInput from "@/components/chat-input";
-import { type Message } from "@/components/message-bubble";
-import { sendMessage } from "@/lib/api";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -53,7 +53,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-3xl items-center justify-between">
           <h1 className="font-display text-[0.6875rem] font-bold tracking-[0.18em] text-[var(--color-ink)] uppercase">
             <button
-              onClick={() => { window.location.href = process.env.NEXT_PUBLIC_BASE_PATH || "/"; }}
+              onClick={() => { window.location.href = "/"; }}
               className="cursor-pointer hover:text-[var(--color-accent)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
               aria-label="Pojdi domov"
             >
