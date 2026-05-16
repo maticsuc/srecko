@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import ChatWindow from "@/components/chat-window";
 import ChatInput from "@/components/chat-input";
+import SiteHeader from "@/components/site-header";
 import { type Message } from "@/components/message-bubble";
 import { sendMessage } from "@/lib/api";
 
@@ -48,24 +49,7 @@ export default function Home() {
 
   return (
     <div className="flex h-dvh flex-col">
-      {/* Masthead */}
-      <header className="border-b border-[var(--color-ink)] px-4 py-2">
-        <div className="mx-auto flex max-w-3xl items-center justify-between">
-          <h1 className="font-display text-[0.6875rem] font-bold tracking-[0.18em] text-[var(--color-ink)] uppercase">
-            <button
-              onClick={() => { window.location.href = "/"; }}
-              className="cursor-pointer hover:text-[var(--color-accent)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
-              aria-label="Pojdi domov"
-            >
-              Srečko Kosovel
-            </button>
-          </h1>
-          <span className="font-display text-[0.6875rem] tracking-[0.12em] text-[var(--color-muted)] uppercase">
-            1904–1926
-          </span>
-        </div>
-      </header>
-      <div className="h-[2px] bg-[var(--color-accent)]" />
+      <SiteHeader activeMode="chat" />
 
       {/* Chat */}
       <ChatWindow

@@ -72,12 +72,41 @@
   animation: fade-up 0.5s ease-out 0.3s both;
 }
 
+@keyframes game-success {
+  0% { background: var(--color-accent); color: var(--color-paper); transform: translateY(0) scale(1); }
+  45% { background: var(--color-ink); color: var(--color-paper); transform: translateY(-3px) scale(1.04); }
+  100% { background: transparent; color: var(--color-ink); transform: translateY(0) scale(1); }
+}
+.animate-game-success {
+  animation: game-success 0.5s ease-out;
+}
+
+@keyframes game-wrong {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.animate-game-wrong {
+  animation: game-wrong 0.34s ease-in-out;
+}
+
+.game-poem-sheet {
+  background:
+    linear-gradient(90deg, rgba(194, 58, 34, 0.12) 0 1px, transparent 1px 100%),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.06) 0 1px, transparent 1px 100%);
+  background-size: 68px 68px, 100% 3.95rem;
+}
+
 /* Respect reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   .animate-message-in,
   .animate-fade-up,
   .animate-fade-up-delay,
-  .animate-fade-up-delay-2 {
+  .animate-fade-up-delay-2,
+  .animate-game-success,
+  .animate-game-wrong {
     animation: none;
     opacity: 1;
     transform: none;
