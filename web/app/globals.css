@@ -99,6 +99,39 @@
   background-size: 68px 68px, 100% 3.95rem;
 }
 
+.poem-word-reveal {
+  will-change: opacity, transform;
+}
+
+.poem-token-hidden {
+  opacity: 0;
+  transform: translateY(-0.18em);
+}
+
+.poem-token-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.poem-token-writing {
+  animation: poem-token-slide-down 0.11s steps(3, end) both;
+}
+
+@keyframes poem-token-slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.18em);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0.04em);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Respect reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   .animate-message-in,
@@ -109,6 +142,18 @@
   .animate-game-wrong {
     animation: none;
     opacity: 1;
+    filter: none;
     transform: none;
+  }
+
+  .poem-word-reveal {
+    transition: none;
+  }
+
+  .poem-token-hidden,
+  .poem-token-visible {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }

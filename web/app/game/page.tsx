@@ -6,6 +6,8 @@ import { fetchGameRound, type GameBlankPart, type GameRound } from "@/lib/api";
 
 type PlacementMap = Record<string, string>;
 
+const POEM_REVEAL_STEP_MS = 58;
+
 function getBlankIds(round: GameRound): string[] {
   return round.lines
     .flat()
@@ -15,6 +17,18 @@ function getBlankIds(round: GameRound): string[] {
 
 function cx(...classes: Array<string | false | null | undefined>): string {
   return classes.filter(Boolean).join(" ");
+}
+
+function countRevealWords(round: GameRound): number {
+  return round.lines.reduce((total, line) => {
+    return total + line.reduce((lineTotal, part) => {
+      if (part.type === "blank") {
+        return lineTotal + 1;
+      }
+
+      return lineTotal + part.text.split(/(\s+)/).filter((chunk) => chunk && !/^\s+$/.test(chunk)).length;
+    }, 0);
+  }, 0);
 }
 
 export default function GamePage() {
@@ -28,9 +42,12 @@ export default function GamePage() {
   const [wrongBlankId, setWrongBlankId] = useState<string | null>(null);
   const [wrongWordId, setWrongWordId] = useState<string | null>(null);
   const [freshBlankId, setFreshBlankId] = useState<string | null>(null);
+  const [revealedWordCount, setRevealedWordCount] = useState(0);
 
   const blankIds = useMemo(() => (round ? getBlankIds(round) : []), [round]);
   const completed = round !== null && blankIds.every((id) => placements[id]);
+  const revealWordTotal = useMemo(() => (round ? countRevealWords(round) : 0), [round]);
+  const poemRevealComplete = !round || revealedWordCount >= revealWordTotal;
 
   const loadRound = useCallback(async () => {
     setLoading(true);
@@ -43,6 +60,7 @@ export default function GamePage() {
     setWrongBlankId(null);
     setWrongWordId(null);
     setFreshBlankId(null);
+    setRevealedWordCount(0);
 
     try {
       const data = await fetchGameRound();
@@ -57,6 +75,26 @@ export default function GamePage() {
   useEffect(() => {
     loadRound();
   }, [loadRound]);
+
+  useEffect(() => {
+    if (!round || revealWordTotal === 0) {
+      return;
+    }
+
+    setRevealedWordCount(0);
+    const timer = window.setInterval(() => {
+      setRevealedWordCount((current) => {
+        if (current >= revealWordTotal) {
+          window.clearInterval(timer);
+          return current;
+        }
+
+        return current + 1;
+      });
+    }, POEM_REVEAL_STEP_MS);
+
+    return () => window.clearInterval(timer);
+  }, [revealWordTotal, round]);
 
   const attemptPlacement = useCallback(
     (targetBlankId: string, wordBlankId: string) => {
@@ -114,7 +152,7 @@ export default function GamePage() {
               Manjkajoče besede
             </p>
             <h1 className="mt-2 max-w-3xl font-display text-3xl font-bold tracking-normal sm:text-5xl">
-              {round?.title ?? "Nalaganje pesmi"}
+              {round?.title ?? ""}
             </h1>
             {round && (
               <p className="mt-2 text-sm text-[var(--color-muted)]">
@@ -151,9 +189,7 @@ export default function GamePage() {
         </div>
 
         {loading && (
-          <div className="grid flex-1 place-items-center py-16 font-display text-sm tracking-[0.16em] text-[var(--color-muted)] uppercase">
-            Nalagam krog
-          </div>
+          <div className="flex-1 py-16" aria-hidden="true" />
         )}
 
         {!loading && error && (
@@ -167,58 +203,104 @@ export default function GamePage() {
           <>
             <div className="game-poem-sheet flex-1 py-5">
               <div className="max-w-4xl font-display text-[1.35rem] leading-[2.35] sm:text-[1.65rem] sm:leading-[2.45]">
-                {round.lines.map((line, lineIndex) => (
-                  <div key={`${round.id}-${lineIndex}`} className="min-h-[2.35em]">
-                    {line.length === 0 ? (
-                      <span>&nbsp;</span>
-                    ) : (
-                      line.map((part, partIndex) => {
-                        if (part.type === "text") {
-                          return <span key={`${lineIndex}-${partIndex}`}>{part.text}</span>;
-                        }
+                {(() => {
+                  let revealIndex = 0;
 
-                        const placedWordId = placements[part.blankId];
-                        const placedWord = placedWordId ? wordByBlankId.get(placedWordId) : null;
+                  return round.lines.map((line, lineIndex) => (
+                    <div key={`${round.id}-${lineIndex}`} className="min-h-[2.35em]">
+                      {line.length === 0 ? (
+                        <span>&nbsp;</span>
+                      ) : (
+                        line.map((part, partIndex) => {
+                          if (part.type === "text") {
+                            return part.text.split(/(\s+)/).map((chunk, chunkIndex) => {
+                              if (!chunk) {
+                                return null;
+                              }
 
-                        return (
-                          <span
-                            key={part.blankId}
-                            aria-label={placedWord ? `Vstavljena beseda ${placedWord}` : "Prazno mesto"}
-                            onDragOver={(event) => {
-                              if (!placedWord) {
-                                event.preventDefault();
-                                setHoverBlankId(part.blankId);
+                              if (/^\s+$/.test(chunk)) {
+                                return <span key={`${lineIndex}-${partIndex}-${chunkIndex}`}>{chunk}</span>;
                               }
-                            }}
-                            onDragLeave={() => setHoverBlankId(null)}
-                            onDrop={(event) => {
-                              event.preventDefault();
-                              const wordId = event.dataTransfer.getData("text/plain") || draggedWordId;
-                              setHoverBlankId(null);
-                              setDraggedWordId(null);
-                              if (wordId) {
-                                attemptPlacement(part.blankId, wordId);
-                              }
-                            }}
-                            className={cx(
-                              "mx-1 inline-flex min-h-[2.15rem] min-w-24 items-center justify-center border-b-2 px-3 align-baseline transition-all duration-200 sm:min-w-32",
-                              placedWord
-                                ? "border-[var(--color-ink)] bg-transparent font-bold"
-                                : "border-[var(--color-accent)] bg-[var(--color-paper-warm)]/80",
-                              hoverBlankId === part.blankId && !placedWord
-                                ? "scale-105 border-[var(--color-ink)] bg-[var(--color-accent)] text-[var(--color-paper)] shadow-[0_8px_0_var(--color-ink)]"
-                                : null,
-                              wrongBlankId === part.blankId ? "animate-game-wrong" : null,
-                              freshBlankId === part.blankId ? "animate-game-success" : null,
-                            )}
-                          >
-                            {placedWord ?? ""}
-                          </span>
-                        );
-                      })
-                    )}
-                  </div>
-                ))}
+
+                              const currentRevealIndex = revealIndex;
+                              revealIndex += 1;
+
+                              return (
+                                <span
+                                  key={`${lineIndex}-${partIndex}-${chunkIndex}`}
+                                  className={cx(
+                                    "poem-word-reveal inline-block",
+                                    currentRevealIndex < revealedWordCount
+                                      ? "poem-token-visible"
+                                      : "poem-token-hidden",
+                                    currentRevealIndex === revealedWordCount - 1
+                                      ? "poem-token-writing"
+                                      : null,
+                                  )}
+                                >
+                                  {chunk}
+                                </span>
+                              );
+                            });
+                          }
+
+                          const placedWordId = placements[part.blankId];
+                          const placedWord = placedWordId ? wordByBlankId.get(placedWordId) : null;
+                          const currentRevealIndex = revealIndex;
+                          revealIndex += 1;
+
+                          return (
+                            <span
+                              key={part.blankId}
+                              className={cx(
+                                "poem-word-reveal inline-block",
+                                currentRevealIndex < revealedWordCount
+                                  ? "poem-token-visible"
+                                  : "poem-token-hidden",
+                                currentRevealIndex === revealedWordCount - 1
+                                  ? "poem-token-writing"
+                                  : null,
+                              )}
+                            >
+                              <span
+                                aria-label={placedWord ? `Vstavljena beseda ${placedWord}` : "Prazno mesto"}
+                                onDragOver={(event) => {
+                                  if (!placedWord) {
+                                    event.preventDefault();
+                                    setHoverBlankId(part.blankId);
+                                  }
+                                }}
+                                onDragLeave={() => setHoverBlankId(null)}
+                                onDrop={(event) => {
+                                  event.preventDefault();
+                                  const wordId = event.dataTransfer.getData("text/plain") || draggedWordId;
+                                  setHoverBlankId(null);
+                                  setDraggedWordId(null);
+                                  if (wordId) {
+                                    attemptPlacement(part.blankId, wordId);
+                                  }
+                                }}
+                                className={cx(
+                                  "mx-1 inline-flex min-h-[2.15rem] min-w-24 items-center justify-center border-b-2 px-3 align-baseline transition-all duration-200 sm:min-w-32",
+                                  placedWord
+                                    ? "border-[var(--color-ink)] bg-transparent font-bold"
+                                    : "border-[var(--color-accent)] bg-[var(--color-paper-warm)]/80",
+                                  hoverBlankId === part.blankId && !placedWord
+                                    ? "scale-105 border-[var(--color-ink)] bg-[var(--color-accent)] text-[var(--color-paper)] shadow-[0_8px_0_var(--color-ink)]"
+                                    : null,
+                                  wrongBlankId === part.blankId ? "animate-game-wrong" : null,
+                                  freshBlankId === part.blankId ? "animate-game-success" : null,
+                                )}
+                              >
+                                {placedWord ?? ""}
+                              </span>
+                            </span>
+                          );
+                        })
+                      )}
+                    </div>
+                  ));
+                })()}
               </div>
             </div>
 
@@ -236,7 +318,7 @@ export default function GamePage() {
                     Naslednja pesem
                   </button>
                 </div>
-              ) : (
+              ) : poemRevealComplete ? (
                 <div className="flex flex-wrap gap-2">
                   {remainingWords.map((word) => (
                     <button
@@ -263,6 +345,8 @@ export default function GamePage() {
                     </button>
                   ))}
                 </div>
+              ) : (
+                <div className="h-11" aria-hidden="true" />
               )}
             </div>
           </>
