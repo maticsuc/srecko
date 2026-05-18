@@ -28,6 +28,17 @@ from scripts.utils.db import get_connection
 agent = None
 
 GAME_CATEGORY_SLUGS = ("lirika", "avantgardisticna_poezija", "integrali_26")
+OPUS_CATEGORY_ORDER = (
+    "lirika",
+    "avantgardisticna_poezija",
+    "pesmi_v_prozi",
+    "integrali_26",
+    "crtice",
+    "clanki",
+    "eseji_o_umetnosti",
+    "literarne_kritike",
+    "precevanja",
+)
 GAME_BLANK_COUNT = 5
 WORD_RE = re.compile(r"[A-Za-zÀ-ž]+(?:[-'][A-Za-zÀ-ž]+)?", re.UNICODE)
 TOKEN_RE = re.compile(r"[A-Za-zÀ-ž]+(?:[-'][A-Za-zÀ-ž]+)?|\s+|[^\w\s]+", re.UNICODE)
@@ -98,6 +109,26 @@ class GameRoundResponse(BaseModel):
     url: str | None = None
     lines: list
     words: list
+
+
+class OpusWorkResponse(BaseModel):
+    id: int
+    title: str
+    content: str
+    url: str | None = None
+    wordCount: int | None = None
+    category: str
+
+
+class OpusCategoryResponse(BaseModel):
+    slug: str
+    name: str
+    workCount: int
+    works: list[OpusWorkResponse]
+
+
+class OpusResponse(BaseModel):
+    categories: list[OpusCategoryResponse]
 
 
 def is_game_word(token):
@@ -173,6 +204,52 @@ def fetch_random_game_work():
         conn.close()
 
 
+def fetch_opus_categories():
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id, title, content, url, word_count, category_name, category_slug
+                FROM works_full
+                WHERE category_slug = ANY(%s)
+                ORDER BY array_position(%s::text[], category_slug), id;
+                """,
+                (list(OPUS_CATEGORY_ORDER), list(OPUS_CATEGORY_ORDER)),
+            )
+            columns = [desc[0] for desc in cursor.description]
+            rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    finally:
+        conn.close()
+
+    categories_by_slug = {}
+    for row in rows:
+        slug = row["category_slug"]
+        if slug not in categories_by_slug:
+            categories_by_slug[slug] = {
+                "slug": slug,
+                "name": row["category_name"],
+                "workCount": 0,
+                "works": [],
+            }
+
+        categories_by_slug[slug]["works"].append({
+            "id": row["id"],
+            "title": row["title"],
+            "content": row["content"],
+            "url": row.get("url"),
+            "wordCount": row.get("word_count"),
+            "category": row["category_name"],
+        })
+        categories_by_slug[slug]["workCount"] += 1
+
+    return [
+        categories_by_slug[slug]
+        for slug in OPUS_CATEGORY_ORDER
+        if slug in categories_by_slug and categories_by_slug[slug]["workCount"] > 0
+    ]
+
+
 @app.post("/api/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
     if not req.message.strip():
@@ -200,3 +277,11 @@ def game_round():
         raise HTTPException(status_code=500, detail=str(e))
 
     raise HTTPException(status_code=404, detail="No suitable poem found")
+
+
+@app.get("/api/opus", response_model=OpusResponse)
+def opus():
+    try:
+        return OpusResponse(categories=fetch_opus_categories())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

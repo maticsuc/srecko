@@ -1,5 +1,5 @@
 type SiteHeaderProps = {
-  activeMode: "chat" | "game";
+  activeMode: "chat" | "game" | "opus";
 };
 
 const modes = [
@@ -16,6 +16,13 @@ const modes = [
     label: "Igra",
     description: "Dopolni verze",
     ariaLabel: "Odpri igro",
+  },
+  {
+    id: "opus",
+    href: "/opus",
+    label: "Opus",
+    description: "Arhiv del",
+    ariaLabel: "Odpri opus",
   },
 ] as const;
 

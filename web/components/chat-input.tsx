@@ -36,9 +36,9 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className="border-t border-[var(--color-subtle)] bg-[var(--color-paper)] px-4 py-4">
+    <div className="border-t border-[rgba(17,16,14,0.28)] bg-[var(--color-paper)]/88 px-4 py-4 backdrop-blur-[1px]">
       <div className="mx-auto flex max-w-3xl items-end gap-3">
-        <div className="flex flex-1 items-end border border-[var(--color-subtle)] bg-[var(--color-paper-warm)] transition-all duration-200 focus-within:border-[var(--color-ink)] focus-within:shadow-[2px_2px_0_var(--color-accent)]">
+        <div className="paper-panel flex flex-1 items-end transition-all duration-200 focus-within:shadow-[0_0_0_2px_var(--color-ink)]">
           <textarea
             ref={textareaRef}
             value={value}
@@ -54,7 +54,7 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
           onClick={submit}
           disabled={disabled || !value.trim()}
           aria-label="Pošlji sporočilo"
-          className="cursor-pointer shrink-0 flex h-[46px] w-[46px] items-center justify-center bg-[var(--color-ink)] text-[var(--color-paper)] transition-all duration-150 hover:bg-[var(--color-accent)] active:scale-95 disabled:opacity-25 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+          className="cursor-pointer shrink-0 flex h-[46px] w-[46px] items-center justify-center border border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-paper)] transition-all duration-150 hover:bg-transparent hover:text-[var(--color-ink)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

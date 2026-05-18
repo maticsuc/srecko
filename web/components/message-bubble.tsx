@@ -21,18 +21,17 @@ export default function MessageBubble({ message }: { message: Message }) {
         <img
           src="/srecko-avatar.jpg"
           alt="Srečko Kosovel"
-          className="h-8 w-8 shrink-0 self-start rounded-full border-2 border-[var(--color-ink)] object-cover grayscale mt-0.5"
+          className="mt-0.5 h-8 w-8 shrink-0 self-start border border-[var(--color-ink)] object-cover grayscale contrast-125"
         />
       )}
 
-      {/* Bubble */}
       <div
         className={`max-w-[80%] px-4 py-3 ${
           isUser
-            ? "bg-[var(--color-ink)] text-[var(--color-paper)] shadow-[2px_2px_0_var(--color-subtle)]"
+            ? "border border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-paper)]"
             : isError
-            ? "border-l-[3px] border-[var(--color-accent)] bg-[var(--color-paper-warm)] opacity-80"
-            : "border-l-[3px] border-[var(--color-accent)] bg-[var(--color-paper-warm)] shadow-[2px_2px_0_var(--color-subtle)]"
+            ? "border-l-[3px] border-[var(--color-ink)] bg-[rgba(229,220,203,0.68)] opacity-80"
+            : "paper-panel border-l-[3px] border-[var(--color-ink)]"
         }`}
       >
         {isUser ? (
@@ -40,7 +39,7 @@ export default function MessageBubble({ message }: { message: Message }) {
             {message.content}
           </p>
         ) : isError ? (
-          <p className="text-sm leading-relaxed text-[var(--color-accent)] italic">
+          <p className="text-sm leading-relaxed text-[var(--color-ink)] italic">
             {message.content}
           </p>
         ) : (
